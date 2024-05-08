@@ -39,78 +39,74 @@ class BiLSTM(nn.Module):
         return output_sigmoid.squeeze(1).to(x.device)
 
 
-class LSTMClassifier(nn.Module):
-    def __init__(self, device):
-        super(LSTMClassifier, self).__init__()
-        self.hidden_size = 128
-        self.num_layers = 1
-        self.device = device
-        self.lstm = nn.LSTM(7, 128, 1, batch_first=True, bidirectional=True)
-        self.fc1 = nn.Linear(256, 128)
-        self.fc2 = nn.Linear(128, 16)
-        self.fc3 = nn.Linear(16, 1)
+class BiLSTM_CNN_Transformer(nn.Module):
+    def __init__(self, input_size_lstm, hidden_size_lstm, num_layers_lstm, dropout_rate,
+                 num_filters_conv1d, kernel_size_conv1d, padding_conv1d, kernel_size_maxpool,
+                 tran_feature, num_heads_tran, dropout_tran, num_layers_tran):
+        super(BiLSTM_CNN_Transformer, self).__init__()
+        self.input_size_lstm = input_size_lstm
+        self.hidden_size_lstm = hidden_size_lstm
+        self.num_layers_lstm = num_layers_lstm
+
+        self.dropout_layer = dropout_rate
+
+        self.num_filters_conv1d = num_filters_conv1d
+        self.kernel_size_conv1d = kernel_size_conv1d
+        self.padding_conv1d = padding_conv1d
+
+        self.kernel_size_maxpool = kernel_size_maxpool
+
+        self.bilstm = nn.LSTM(self.input_size_lstm, self.hidden_size_lstm, self.num_layers_lstm,
+                              batch_first=True, bidirectional=True)
+        self.conv1d = nn.Conv1d(in_channels=2 * hidden_size_lstm, out_channels=num_filters_conv1d,
+                                kernel_size=kernel_size_conv1d, padding=padding_conv1d)
+        self.maxpool = nn.MaxPool1d(kernel_size=kernel_size_maxpool)
+
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=tran_feature, nhead=num_heads_tran, dropout=dropout_tran)
+        self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=num_layers_tran)
+        self.decoder = nn.Linear(tran_feature, 1)
+        self.init_weights()
+
+        self.fc = nn.Linear(in_features=1 * num_filters_conv1d, out_features=1)
+        self.sig = nn.Sigmoid()
+
+    def init_weights(self):
+        initrange = 0.1
+        self.decoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
+
+    def _generate_square_subsequent_mask(self, sz):
+        mask = (torch.triu(torch.ones(sz, sz)) == 1).transpose(0, 1)
+        mask = mask.float().masked_fill(mask == 0, float('-inf')).masked_fill(mask == 1, float(0.0))
+        return mask
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers * 2,
-                         x.size(0),
-                         self.hidden_size).to(self.device)
-        c0 = torch.zeros(self.num_layers * 2,
-                         x.size(0),
-                         self.hidden_size).to(self.device)
+        h0 = torch.zeros(2*self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
+        c0 = torch.zeros(2*self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
 
-        # LSTM层
-        out, _ = self.lstm(x, (h0, c0))
+        lstm_out, _ = self.bilstm(x, (h0, c0))
+        conv_out = torch.relu(self.conv1d(lstm_out.permute(0, 2, 1)))
+        pool_out = self.maxpool(conv_out)
 
-        # 取最后一个时间步的输出
-        out = out[:, -1, :]
+        mask = self._generate_square_subsequent_mask(pool_out.shape[0])
+        output_tran = self.transformer_encoder(pool_out, mask)
+        output_tran = self.decoder(output_tran)
 
-        # 两个线性层
-        out = torch.relu(self.fc1(out))
-        out = torch.relu(self.fc2(out))
-        out = torch.sigmoid(self.fc3(out))
-        return out.squeeze(1).to(self.device)
-class BiLSTM_CNN_SelfAttention(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, num_filters, kernel_size, padding, time_step, num_heads,
-                 num_classes):
-        super(BiLSTM_CNN_SelfAttention, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.bilst = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, bidirectional=True)
-        self.conv1d = nn.Conv1d(in_channels=2 * hidden_size, out_channels=num_filters, kernel_size=kernel_size,
-                                padding=padding)
-        self.maxpool = nn.MaxPool1d(kernel_size=kernel_size)
-        self.attention = nn.MultiheadAttention(embed_dim=8, num_heads=num_heads, dropout=0.5)
-        self.fc = nn.Linear(8 * num_filters, num_classes)
-        self.softmax = nn.Softmax(dim=1)
-
-    def forward(self, x):
-        lstm_out, _ = self.bilst(x)
-
-        conv_out = self.conv1d(lstm_out.permute(0, 2, 1))
-        conv_out = F.relu(conv_out)
-
-        pooled_out = self.maxpool(conv_out)
-
-        attn_output, attn_weights = self.attention(pooled_out, pooled_out, pooled_out)
-
-        flatten_out = attn_output.flatten(1, 2)
-
-        fc_output = self.fc(flatten_out)
-
-        output = self.softmax(fc_output)
-
-        return output
-
+        flatten_out = output_tran.flatten(1, 2)
+        fc_out = self.fc(flatten_out)
+        sigmoid_out = self.sig(fc_out)
+        return sigmoid_out.squeeze(1).to(x.device)
 
 if __name__ == '__main__':
     inputs = torch.ones((1280, 24, 7))
-    model = BiLSTM_CNN_SelfAttention(input_size=7, hidden_size=128, num_layers=2,
-                                     num_filters=10, kernel_size=3, padding=1,
-                                     time_step=inputs.shape[1], num_heads=2,
-                                     num_classes=2)
+    kernel_size_maxpool = 3
+    model = BiLSTM_CNN_Transformer(7, 128, 2,
+                                   0.5, 10, 3,
+                                   1, 3, 8,
+                                   4, 0.3, 3)
     # 设置模型为 evaluation 模式
     model.eval()
-
+    outputs = model(inputs)
 
     # 使用 torch.jit.trace 跟踪模型
     traced_model = torch.jit.trace(model, inputs)

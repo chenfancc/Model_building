@@ -5,7 +5,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 
-def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer):
+def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer, threshold=0.5):
     writer = SummaryWriter(f"logs_train_of_{model_name}")
     total_train_step = 0
     train_loss_list = []
@@ -58,7 +58,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
                     targets = targets.cuda()
                 outputs = model(data)
                 # print(outputs.shape)
-                outputs_bi = (outputs >= 0.5).float()
+                outputs_bi = (outputs >= threshold).float()
                 # print(outputs_bi)
                 loss = loss_fn(outputs, targets.float())
                 total_val_loss = total_val_loss + loss.item()
@@ -68,7 +68,8 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
                 FN = ((outputs_bi == 0) & (targets == 1)).sum().item()  # 预测为负类但实际为正类的数量
                 accuracy = TP + TN
                 total_accuracy = total_accuracy + accuracy
-                total_num = TP + TN + FP + FN
+                test_num = TP + TN + FP + FN
+                total_num += test_num
                 total_TP = total_TP + TP
                 total_TN = total_TN + TN
                 total_FP = total_FP + FP
