@@ -62,7 +62,8 @@ class BiLSTM_CNN_Transformer(nn.Module):
                                 kernel_size=kernel_size_conv1d, padding=padding_conv1d)
         self.maxpool = nn.MaxPool1d(kernel_size=kernel_size_maxpool)
 
-        self.encoder_layer = nn.TransformerEncoderLayer(d_model=tran_feature, nhead=num_heads_tran, dropout=dropout_tran)
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=tran_feature, nhead=num_heads_tran,
+                                                        dropout=dropout_tran)
         self.transformer_encoder = nn.TransformerEncoder(self.encoder_layer, num_layers=num_layers_tran)
         self.decoder = nn.Linear(tran_feature, 1)
         self.init_weights()
@@ -81,8 +82,8 @@ class BiLSTM_CNN_Transformer(nn.Module):
         return mask
 
     def forward(self, x):
-        h0 = torch.zeros(2*self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
-        c0 = torch.zeros(2*self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
+        h0 = torch.zeros(2 * self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
+        c0 = torch.zeros(2 * self.num_layers_lstm, x.size(0), self.hidden_size_lstm).to(x.device)
 
         lstm_out, _ = self.bilstm(x, (h0, c0))
         conv_out = torch.relu(self.conv1d(lstm_out.permute(0, 2, 1)))
@@ -97,6 +98,10 @@ class BiLSTM_CNN_Transformer(nn.Module):
         sigmoid_out = self.sig(fc_out)
         return sigmoid_out.squeeze(1).to(x.device)
 
+
+
+
+
 if __name__ == '__main__':
     inputs = torch.ones((1280, 24, 7))
     kernel_size_maxpool = 3
@@ -107,9 +112,3 @@ if __name__ == '__main__':
     # 设置模型为 evaluation 模式
     model.eval()
     outputs = model(inputs)
-
-    # 使用 torch.jit.trace 跟踪模型
-    traced_model = torch.jit.trace(model, inputs)
-
-    # 保存跟踪后的模型
-    traced_model.save('traced_model.pt')

@@ -1,5 +1,8 @@
 import time
 
+import pandas as pd
+from kan import KAN
+
 from oversample import balance_data
 from model import *
 from train_net import train_val_net
@@ -10,12 +13,7 @@ from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
 
-if __name__ == '__main__':
-
-    BATCH_SIZE = 128
-    EPOCH = 10
-    LR = 1e-3
-
+def main_data_loader():
     data = torch.load('./data/data_tensor.pth')
 
     data_train = data['data_tensor_train']
@@ -24,7 +22,7 @@ if __name__ == '__main__':
     label_val = data['label_tensor_val']
     data_test = data['data_tensor_test']
     label_test = data['label_tensor_test']
-    data = data['data_tensor_cell']
+    # data = data['data_tensor_cell']
     # label = data['label_tensor_cell']
 
     data_train_b, label_train_b = balance_data(data_train, label_train)
@@ -37,33 +35,49 @@ if __name__ == '__main__':
     train_dataloader = DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True)
     val_dataloader = DataLoader(dataset_val, batch_size=BATCH_SIZE, shuffle=True)
     test_dataloader = DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=True)
+    return train_dataloader, val_dataloader, test_dataloader
 
-    device = "cuda"
+
+def train_BiLSTM():
+    model_name = "bilstm_1"
     model = BiLSTM()
     model.to(device)
     loss_fn = nn.BCELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 
     start_time = time.time()
-    info = train_val_net("bilstm_1", EPOCH, model, train_dataloader, val_dataloader, loss_fn, optimizer)
+    info = train_val_net(model_name, EPOCH, model, train_dataloader, val_dataloader, loss_fn, optimizer)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Training finished in {elapsed_time:.2f} seconds.")
+    plot_figure(info, model_name)
 
-    plot_figure(info)
 
-    BiLSTM_CNN_Transformer = BiLSTM_CNN_Transformer(7, 128, 2,
+def train_BiLSTM_CNN_Transformer():
+    model_name = "BiLSTM_CNN_Transformer"
+    model = BiLSTM_CNN_Transformer(7, 128, 2,
                                    0.5, 10, 3,
                                    1, 3, 8,
                                    4, 0.3, 3)
-    BiLSTM_CNN_Transformer.to(device)
+    model.to(device)
     loss_fn = nn.BCELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
 
     start_time = time.time()
-    info = train_val_net("BiLSTM_CNN_Transformer", EPOCH, BiLSTM_CNN_Transformer, train_dataloader, val_dataloader, loss_fn, optimizer)
+    info = train_val_net(model_name, EPOCH, BiLSTM_CNN_Transformer, train_dataloader, val_dataloader, loss_fn,
+                         optimizer)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Training finished in {elapsed_time:.2f} seconds.")
+    plot_figure(info, model_name)
 
-    plot_figure(info)
+# def train_KAN():
+
+
+if __name__ == '__main__':
+    BATCH_SIZE = 128
+    EPOCH = 1
+    LR = 1e-3
+    device = "cuda"
+
+    train_dataloader, val_dataloader, test_dataloader = main_data_loader()

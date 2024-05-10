@@ -1,8 +1,15 @@
+import json
+import os
+import pickle
+
 import torch
 from matplotlib import pyplot as plt
 
 
-def plot_figure(info):
+def plot_figure(info, model_name):
+    file_path = os.path.join(f"./{model_name}", "data.json")
+    with open(file_path, "w") as file:
+        json.dump(info, file)
     train_loss_list = info["train_loss_list"]
     val_loss_list = info["val_loss_list"]
     accuracy_list = info["accuracy_list"]
@@ -24,6 +31,7 @@ def plot_figure(info):
     plt.legend()
 
     plt.show()
+    plt.savefig(f"{model_name}/{model_name}_1.png")
     plt.clf()
 
     plt.plot(accuracy_list_cpu, label='Accuracy')
@@ -36,3 +44,4 @@ def plot_figure(info):
     plt.legend()
 
     plt.show()
+    plt.savefig(f"{model_name}/{model_name}_2.png")
