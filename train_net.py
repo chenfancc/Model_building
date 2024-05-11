@@ -1,11 +1,14 @@
 import os
+from datetime import datetime
 
 import torch.cuda
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
+from val import validation
 
-def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer, threshold=0.5):
+
+def train_val_net_old(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer, threshold=0.5):
     writer = SummaryWriter(f"logs_train_of_{model_name}")
     total_train_step = 0
     train_loss_list = []
@@ -90,6 +93,77 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
             torch.save(model, f"{model_name}/{model_name}_{i}.pth")
             print("模型已保存")
         writer.close()
+    info = {
+        "train_loss_list": train_loss_list,
+        "val_loss_list": val_loss_list,
+        "accuracy_list": accuracy_list,
+        "alarm_sen_list": alarm_sen_list,
+        "alarm_acc_list": alarm_acc_list
+    }
+    return info
+
+def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer):
+    total_train_step = 0
+    train_loss_list = []
+    val_loss_list = []
+    accuracy_list = []
+    alarm_sen_list = []
+    alarm_acc_list = []
+
+    for i in range(epoch):
+        assert epoch is not None and epoch > 0, "EPOCH错误"
+        print("-------第 {} 轮训练开始-------".format(i + 1))
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("开始时间", current_time)
+        model.train()
+        model.to("cuda")
+        for item in train_dataloader:
+            data, targets = item
+            data = data.float()
+            targets = targets.long()
+            if torch.cuda.is_available():
+                data = data.cuda()
+                targets = targets.cuda()
+            outputs = model(data)
+            loss = loss_fn(outputs, targets.float())
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total_train_step += 1
+            if total_train_step % 100 == 0:
+                print("训练次数：{}, Loss: {}, Device:{}".format(total_train_step, loss.item(), loss.device))
+        train_loss_list.append(loss.item())
+        model.eval()
+        eps = 1e-6
+        total_val_loss = eps
+        true_labels = []
+        count = 0
+        with torch.no_grad():
+            for item in val_dataloader:
+                count += 1
+                data, targets = item
+                data = data.float()
+                targets = targets.long()
+                if torch.cuda.is_available():
+                    data = data.cuda()
+                    targets = targets.cuda()
+                outputs = model(data)
+                true_labels.append(targets.cpu().numpy())
+                loss = loss_fn(outputs, targets.float())
+                total_val_loss = total_val_loss + loss.item()
+            print("整体测试集上的Loss: {}".format(total_val_loss / count))
+            val_loss_list.append(total_val_loss / count)
+            _, specificity, sensitivity, alarm_accuracy, accuracy = validation(val_dataloader, model.to("cpu"))
+            accuracy_list.append(accuracy)
+            alarm_sen_list.append(sensitivity)
+            alarm_acc_list.append(alarm_accuracy)
+            model_directory = f"./{model_name}/"
+            if not os.path.exists(model_directory):
+                os.makedirs(model_directory)
+            torch.save(model, f"{model_name}/{model_name}_{i}.pth")
+            print("模型已保存")
     info = {
         "train_loss_list": train_loss_list,
         "val_loss_list": val_loss_list,

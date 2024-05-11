@@ -5,21 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2da6e861-88c1-40d2-8fb9-dbac2ababe18" name="更改" comment="1.0">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/111.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/111.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/000.ipynb" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/data/data_tensor.pth" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/step1.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/step2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/step3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/step4.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/step5.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/test.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/val.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/111.py" beforeDir="false" afterPath="$PROJECT_DIR$/111.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/test.sql" beforeDir="false" afterPath="$PROJECT_DIR$/Hyperparameters.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/figure.py" beforeDir="false" afterPath="$PROJECT_DIR$/figure.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_net.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,8 +24,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Jupyter Notebook" />
         <option value="Python Script" />
+        <option value="Jupyter Notebook" />
       </list>
     </option>
   </component>
@@ -72,12 +67,13 @@
     "Python.model.executor": "Run",
     "Python.test.executor": "Run",
     "Python.train_net.executor": "Run",
+    "Python.val.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "E:/deeplearning/Model_building",
+    "last_opened_file_path": "C:/Users/31919/Desktop",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -100,7 +96,7 @@
       <recent name="E:\deeplearning\Model_building\draft" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.111">
+  <component name="RunManager" selected="Python.main">
     <configuration name="111" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Model_building" />
       <option name="ENV_FILES" value="" />
@@ -172,8 +168,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.111" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.111" />
         <item itemvalue="Python.model" />
       </list>
     </recent_temporary>
@@ -202,6 +198,7 @@
       <workItem from="1715164822349" duration="5035000" />
       <workItem from="1715183013612" duration="3205000" />
       <workItem from="1715355430213" duration="3746000" />
+      <workItem from="1715406480592" duration="12530000" />
     </task>
     <task id="LOCAL-00001" summary="1.0">
       <option name="closed" value="true" />
@@ -267,7 +264,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715160452453</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="1.0">
+      <option name="closed" value="true" />
+      <created>1715421462230</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1715421462230</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -306,9 +311,10 @@
     <SUITE FILE_PATH="coverage/Model_building$aaaaaaaa.coverage" NAME="aaaaaaaa 覆盖结果" MODIFIED="1715109408360" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Model_building$bbb.coverage" NAME="bbb 覆盖结果" MODIFIED="1715109355978" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/draft" />
     <SUITE FILE_PATH="coverage/Model_building$111.coverage" NAME="111 覆盖结果" MODIFIED="1715184620869" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Model_building$val.coverage" NAME="val 覆盖结果" MODIFIED="1715438434879" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Model_building$test.coverage" NAME="test 覆盖结果" MODIFIED="1715097058143" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Model_building$train_net.coverage" NAME="train_net 覆盖结果" MODIFIED="1715142696855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Model_building$model.coverage" NAME="model 覆盖结果" MODIFIED="1715147069676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Model_building$main.coverage" NAME="main 覆盖结果" MODIFIED="1715162272852" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Model_building$main.coverage" NAME="main 覆盖结果" MODIFIED="1715441031449" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

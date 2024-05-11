@@ -29,9 +29,9 @@ def plot_figure(info, model_name):
     plt.ylabel('Value')
     plt.title('Training Metrics')
     plt.legend()
-
+    plt.savefig(f"{model_name}/{model_name}_loss.png")
     plt.show()
-    plt.savefig(f"{model_name}/{model_name}_1.png")
+
     plt.clf()
 
     plt.plot(accuracy_list_cpu, label='Accuracy')
@@ -43,5 +43,5 @@ def plot_figure(info, model_name):
     plt.title('Training Metrics')
     plt.legend()
 
+    plt.savefig(f"{model_name}/{model_name}_info.png")
     plt.show()
-    plt.savefig(f"{model_name}/{model_name}_2.png")

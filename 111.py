@@ -33,6 +33,7 @@ def undersample(data):
 
     return undersampled_data
 
+
 if __name__ == "__main__":
     model = KAN([7, 10, 1], device="cuda")
     df = pd.read_csv("data_OK.csv")
@@ -44,11 +45,11 @@ if __name__ == "__main__":
     dataset['test_input'] = torch.from_numpy(data[-length:, 2:9]).to("cuda")
     dataset['train_label'] = torch.from_numpy(data[:-length, 9]).reshape((-1, 1)).to("cuda")
     dataset['test_label'] = torch.from_numpy(data[-length:, 9]).reshape((-1, 1)).to("cuda")
+
+
     # print(dataset['train_input'].shape)
     # print(dataset['test_label'][0:20,:])
     # print(dataset['train_label'])
-
-
 
     def train_acc():
         return torch.mean((torch.round(model(dataset['train_input'])[:, 0]) == dataset['train_label'][:, 0]).float())
@@ -56,7 +57,6 @@ if __name__ == "__main__":
 
     def test_acc():
         return torch.mean((torch.round(model(dataset['test_input'])[:, 0]) == dataset['test_label'][:, 0]).float())
-
 
 
     results = model.train(dataset, opt="LBFGS", steps=20, metrics=(train_acc, test_acc), device="cuda:0")
