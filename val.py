@@ -30,7 +30,7 @@ def calculate_metrics(true_labels_flat, predicted_probs_flat, best_threshold):
     return confusion_matrix, specificity, sensitivity, alarm_accuracy, accuracy
 
 
-def plot_confusion_matrix(cm, classes, normalize=False, title='混淆矩阵', cmap=plt.cm.Blues):
+def plot_confusion_matrix(model_name, idx, cm, classes, normalize=False, title='混淆矩阵', cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -57,19 +57,20 @@ def plot_confusion_matrix(cm, classes, normalize=False, title='混淆矩阵', cm
 
     fmt = '.2f' if normalize else 'd'
     thresh = cm.max() / 2.
-    for idx in range(cm.shape[0]):
+    for i in range(cm.shape[0]):
         for j in range(cm.shape[1]):
-            plt.text(j, idx, format(cm[idx, j], fmt),
+            plt.text(j, i, format(cm[i, j], fmt),
                      horizontalalignment="center",
-                     color="red" if cm[idx, j] > thresh else "red")
+                     color="red" if cm[i, j] > thresh else "red")
 
     plt.ylabel('真实类别')
     plt.xlabel('预测类别')
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"{model_name}/{model_name}_CM_EPOCH_{idx}.png")
+    plt.close()
 
 
-def validation(data_loader, model):
+def validation(data_loader, model, model_name, idx):
     model.eval()  # 设置为评估模式
     true_labels = []
     predicted_probs = []
@@ -103,7 +104,8 @@ def validation(data_loader, model):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver Operating Characteristic (ROC)')
     plt.legend(loc="lower right")
-    plt.show()
+    plt.savefig(f"{model_name}/{model_name}_ROC_EPOCH_{idx}.png")
+    plt.close()
 
     confusion_matrix, specificity, sensitivity, alarm_accuracy, accuracy = calculate_metrics(true_labels_flat,
                                                                                              predicted_probs_flat,
@@ -117,6 +119,6 @@ def validation(data_loader, model):
     print(f"Accuracy: {accuracy:.2f}")
 
     # 绘制混淆矩阵
-    plot_confusion_matrix(confusion_matrix, classes=['Survive', 'Death'])
+    plot_confusion_matrix(model_name, idx, confusion_matrix, classes=['Survive', 'Death'])
 
     return confusion_matrix, specificity, sensitivity, alarm_accuracy, accuracy

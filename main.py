@@ -1,6 +1,5 @@
 import time
 from datetime import datetime
-
 from oversample import balance_data
 from model import *
 from train_net import train_val_net
@@ -11,8 +10,8 @@ from torch.utils.data import TensorDataset, DataLoader
 from Hyperparameters import *
 
 
-def main_data_loader(i):
-    data = torch.load(f'./data/data_tensor_{i}.pth')
+def main_data_loader(data_idx):
+    data = torch.load(f'./data/data_tensor_{data_idx}.pth')
 
     data_train = data['data_tensor_train']
     label_train = data['label_tensor_train']
@@ -30,21 +29,21 @@ def main_data_loader(i):
     dataset_test = TensorDataset(data_test, label_test)
 
     # 利用 DataLoader 来加载数据集
-    train_dataloader = DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True)
-    val_dataloader = DataLoader(dataset_val, batch_size=BATCH_SIZE, shuffle=True)
-    test_dataloader = DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=True)
-    return train_dataloader, val_dataloader, test_dataloader
+    train_dataloader_f = DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True)
+    val_dataloader_f = DataLoader(dataset_val, batch_size=BATCH_SIZE, shuffle=True)
+    test_dataloader_f = DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=True)
+    return train_dataloader_f, val_dataloader_f, test_dataloader_f
 
 
-def train_BiLSTM(i=1):
-    model_name = f"bilstm_{i}"
-    model = BiLSTM()
-    model.to(device)
+def train_BiLSTM(data_idx=0):
+    model_name = f"BiLSTM_{data_idx}"
+    my_model = BiLSTM()
+    my_model.to(device)
     loss_fn = nn.BCELoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=LR)
+    optimizer = torch.optim.SGD(my_model.parameters(), lr=LR)
 
     start_time = time.time()
-    info = train_val_net(model_name, EPOCH, model, train_dataloader, val_dataloader, loss_fn, optimizer)
+    info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Training finished in {elapsed_time:.2f} seconds.")
@@ -53,13 +52,13 @@ def train_BiLSTM(i=1):
 
 def train_BiLSTM_CNN_Transformer():
     model_name = "BiLSTM_CNN_Transformer"
-    model = BiLSTM_CNN_Transformer(7, 128, 2,
-                                   0.5, 10, 3,
-                                   1, 3, 8,
-                                   4, 0.3, 3)
-    model.to(device)
+    my_model = BiLSTM_CNN_Transformer(7, 128, 2,
+                                      0.5, 10, 3,
+                                      1, 3, 8,
+                                      4, 0.3, 3)
+    my_model.to(device)
     loss_fn = nn.BCELoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    optimizer = torch.optim.SGD(my_model.parameters(), lr=0.1)
 
     start_time = time.time()
     info = train_val_net(model_name, EPOCH, BiLSTM_CNN_Transformer, train_dataloader, val_dataloader, loss_fn,
@@ -79,3 +78,4 @@ if __name__ == '__main__':
         print("Start Time =", current_time)
         train_dataloader, val_dataloader, test_dataloader = main_data_loader(i)
         train_BiLSTM(i)
+        break

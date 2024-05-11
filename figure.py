@@ -13,12 +13,16 @@ def plot_figure(info, model_name):
     train_loss_list = info["train_loss_list"]
     val_loss_list = info["val_loss_list"]
     accuracy_list = info["accuracy_list"]
+    specificity_list = info["specificity_list"]
     alarm_sen_list = info["alarm_sen_list"]
     alarm_acc_list = info["alarm_acc_list"]
+    
     accuracy_tensor = torch.tensor(accuracy_list)  # Convert list to PyTorch tensor
+    specificity_tensor = torch.tensor(specificity_list)  # Convert list to PyTorch tensor
     alarm_sen_tensor = torch.tensor(alarm_sen_list)  # Convert list to PyTorch tensor
     alarm_acc_tensor = torch.tensor(alarm_acc_list)  # Convert list to PyTorch tensor
     accuracy_list_cpu = accuracy_tensor.cpu()  # Move tensor to CPU memory
+    specificity_list_cpu = specificity_tensor.cpu()  # Move tensor to CPU memory
     alarm_sen_cpu = alarm_sen_tensor.cpu()
     alarm_acc_cpu = alarm_acc_tensor.cpu()
 
@@ -35,6 +39,7 @@ def plot_figure(info, model_name):
     plt.clf()
 
     plt.plot(accuracy_list_cpu, label='Accuracy')
+    plt.plot(specificity_list_cpu, label='specificity')
     plt.plot(alarm_sen_cpu, label='Alarm Sensitivity')
     plt.plot(alarm_acc_cpu, label='Alarm Accuracy')
 

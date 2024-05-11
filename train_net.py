@@ -107,6 +107,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
     train_loss_list = []
     val_loss_list = []
     accuracy_list = []
+    specificity_list = []
     alarm_sen_list = []
     alarm_acc_list = []
 
@@ -155,8 +156,9 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
                 total_val_loss = total_val_loss + loss.item()
             print("整体测试集上的Loss: {}".format(total_val_loss / count))
             val_loss_list.append(total_val_loss / count)
-            _, specificity, sensitivity, alarm_accuracy, accuracy = validation(val_dataloader, model.to("cpu"))
+            _, specificity, sensitivity, alarm_accuracy, accuracy = validation(val_dataloader, model.to("cpu"), model_name, i)
             accuracy_list.append(accuracy)
+            specificity_list.append(specificity)
             alarm_sen_list.append(sensitivity)
             alarm_acc_list.append(alarm_accuracy)
             model_directory = f"./{model_name}/"
@@ -168,6 +170,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
         "train_loss_list": train_loss_list,
         "val_loss_list": val_loss_list,
         "accuracy_list": accuracy_list,
+        "specificity_list": specificity_list,
         "alarm_sen_list": alarm_sen_list,
         "alarm_acc_list": alarm_acc_list
     }
