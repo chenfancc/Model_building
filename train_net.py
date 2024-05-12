@@ -105,6 +105,7 @@ def train_val_net_old(model_name, epoch, model, train_dataloader, val_dataloader
 def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer):
     total_train_step = 0
     train_loss_list = []
+    train_loss_total_list = []
     val_loss_list = []
     accuracy_list = []
     specificity_list = []
@@ -127,7 +128,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
                 targets = targets.cuda()
             outputs = model(data)
             loss = loss_fn(outputs, targets.float())
-
+            train_loss_total_list.append(loss.item())
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -156,14 +157,14 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
                 total_val_loss = total_val_loss + loss.item()
             print("整体测试集上的Loss: {}".format(total_val_loss / count))
             val_loss_list.append(total_val_loss / count)
+            model_directory = f"./{model_name}/"
+            if not os.path.exists(model_directory):
+                os.makedirs(model_directory)
             _, specificity, sensitivity, alarm_accuracy, accuracy = validation(val_dataloader, model.to("cpu"), model_name, i)
             accuracy_list.append(accuracy)
             specificity_list.append(specificity)
             alarm_sen_list.append(sensitivity)
             alarm_acc_list.append(alarm_accuracy)
-            model_directory = f"./{model_name}/"
-            if not os.path.exists(model_directory):
-                os.makedirs(model_directory)
             torch.save(model, f"{model_name}/{model_name}_{i}.pth")
             print("模型已保存")
     info = {
@@ -172,7 +173,8 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
         "accuracy_list": accuracy_list,
         "specificity_list": specificity_list,
         "alarm_sen_list": alarm_sen_list,
-        "alarm_acc_list": alarm_acc_list
+        "alarm_acc_list": alarm_acc_list,
+        "train_loss_total_list": train_loss_total_list
     }
     return info
 

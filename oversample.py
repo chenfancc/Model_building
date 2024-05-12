@@ -3,7 +3,7 @@ import torch
 def balance_data(data, label):
     """
     过采样
-    :param data: data
+    :param data: data_label_1
     :param label: label
     :return:
     """

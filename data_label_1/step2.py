@@ -3,7 +3,7 @@ import numpy as np
 from tqdm import tqdm
 
 
-def tick_label(numpy_array, time_dif, is_blood=None):
+def tick_label(numpy_array, time_DIF, is_blood=None):
     time_column = np.zeros(numpy_array.shape[0], dtype=float)
     for stay_id in tqdm(np.unique(numpy_array[:, 2]), desc="Processing IDs"):  # 添加进度条
         # print(id)
@@ -25,7 +25,7 @@ def tick_label(numpy_array, time_dif, is_blood=None):
     for idx in tqdm(range(numpy_array.shape[0]), desc="Processing rows"):  # 添加进度条
         time_diff = (pd.to_datetime(numpy_array[idx, 3]) -
                      pd.to_datetime(numpy_array[idx, 5])).total_seconds() // 3600
-        if time_diff <= time_dif:
+        if time_diff <= time_DIF:
             label_column[idx] = 1
         else:
             label_column[idx] = 0

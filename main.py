@@ -7,11 +7,15 @@ from figure import plot_figure
 import torch
 from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
-from Hyperparameters import *
+
+BATCH_SIZE = 128
+EPOCH = 50
+LR = 1e-3
+device = "cuda"
 
 
 def main_data_loader(data_idx):
-    data = torch.load(f'./data/data_tensor_{data_idx}.pth')
+    data = torch.load(f'data_label_1/data_tensor_{data_idx}.pth')
 
     data_train = data['data_tensor_train']
     label_train = data['label_tensor_train']
@@ -19,8 +23,8 @@ def main_data_loader(data_idx):
     label_val = data['label_tensor_val']
     data_test = data['data_tensor_test']
     label_test = data['label_tensor_test']
-    # data = data['data_tensor_cell']
-    # label = data['label_tensor_cell']
+    # data_label_1 = data_label_1['data_tensor_cell']
+    # label = data_label_1['label_tensor_cell']
 
     data_train_b, label_train_b = balance_data(data_train, label_train)
 
@@ -38,6 +42,21 @@ def main_data_loader(data_idx):
 def train_BiLSTM(data_idx=0):
     model_name = f"BiLSTM_{data_idx}"
     my_model = BiLSTM()
+    my_model.to(device)
+    loss_fn = nn.BCELoss()
+    optimizer = torch.optim.SGD(my_model.parameters(), lr=LR)
+
+    start_time = time.time()
+    info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer)
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Training finished in {elapsed_time:.2f} seconds.")
+    plot_figure(info, model_name)
+
+
+def train_BiLSTM_BN(data_idx=0):
+    model_name = f"BiLSTM_softmax_{data_idx}"
+    my_model = BiLSTM_BN()
     my_model.to(device)
     loss_fn = nn.BCELoss()
     optimizer = torch.optim.SGD(my_model.parameters(), lr=LR)
@@ -77,5 +96,10 @@ if __name__ == '__main__':
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
         print("Start Time =", current_time)
         train_dataloader, val_dataloader, test_dataloader = main_data_loader(i)
-        train_BiLSTM(i)
-        break
+        print(EPOCH)
+        print(device)
+        print(LR)
+        print(BATCH_SIZE)
+        train_BiLSTM_BN(i)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
