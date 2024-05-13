@@ -58,54 +58,61 @@ def tick_label(numpy_array, time_DIF, type):
     return df_mean
 
 
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
-print("Start Time =", current_time)
+def run_step2_label_1(not_test=True):
+    if not_test:
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
 
-# time.sleep(60*30)  # 暂停 10 秒
+        # time.sleep(60*30)  # 暂停 10 秒
 
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
-print("Start Time =", current_time)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
 
-data_dirs = ["../data", "../data/label_1", "../data/label_1/ticked_data"]  # 定义需要检查的目录列表
+        data_dirs = ["../data", "../data/label_1", "../data/label_1/ticked_data"]  # 定义需要检查的目录列表
 
-for directory in data_dirs:  # 检查并创建目录
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"Directory '{directory}' created.")
+        for directory in data_dirs:  # 检查并创建目录
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                print(f"Directory '{directory}' created.")
 
-df_1 = pd.read_excel("../data/raw_data/blood_pressure_with_label.xlsx")
-numpy_array_1 = df_1.to_numpy()
-print("numpy_array_1 has been loaded")
+        df_1 = pd.read_excel("../data/raw_data/blood_pressure_with_label.xlsx")
+        numpy_array_1 = df_1.to_numpy()
+        print("numpy_array_1 has been loaded")
 
-df_2 = pd.read_excel("../data/raw_data/heart_rate_with_label.xlsx")
-numpy_array_2 = df_2.to_numpy()
-print("numpy_array_2 has been loaded")
+        df_2 = pd.read_excel("../data/raw_data/heart_rate_with_label.xlsx")
+        numpy_array_2 = df_2.to_numpy()
+        print("numpy_array_2 has been loaded")
 
-df_3 = pd.read_excel("../data/raw_data/respiratory_rate_with_label.xlsx")
-numpy_array_3 = df_3.to_numpy()
-print("numpy_array_3 has been loaded")
+        df_3 = pd.read_excel("../data/raw_data/respiratory_rate_with_label.xlsx")
+        numpy_array_3 = df_3.to_numpy()
+        print("numpy_array_3 has been loaded")
 
-df_4 = pd.read_excel("../data/raw_data/spo2_with_label.xlsx")
-numpy_array_4 = df_4.to_numpy()
-print("numpy_array_4 has been loaded")
+        df_4 = pd.read_excel("../data/raw_data/spo2_with_label.xlsx")
+        numpy_array_4 = df_4.to_numpy()
+        print("numpy_array_4 has been loaded")
 
-df_5 = pd.read_excel("../data/raw_data/temperature_with_label.xlsx")
-numpy_array_5 = df_5.to_numpy()
-print("numpy_array_5 has been loaded")
+        df_5 = pd.read_excel("../data/raw_data/temperature_with_label.xlsx")
+        numpy_array_5 = df_5.to_numpy()
+        print("numpy_array_5 has been loaded")
 
-for i in [20, 24, 30, 36, 48]:
-    print(f"i = {i}")
-    data_1 = tick_label(numpy_array_1, i, "blood")
-    data_2 = tick_label(numpy_array_2, i, "hr")
-    data_3 = tick_label(numpy_array_3, i, "rr")
-    data_4 = tick_label(numpy_array_4, i, "spo2")
-    data_5 = tick_label(numpy_array_5, i, "temp")
+        for i in [20, 24, 30, 36, 48]:
+            print(f"i = {i}")
+            data_1 = tick_label(numpy_array_1, i, "blood")
+            data_2 = tick_label(numpy_array_2, i, "hr")
+            data_3 = tick_label(numpy_array_3, i, "rr")
+            data_4 = tick_label(numpy_array_4, i, "spo2")
+            data_5 = tick_label(numpy_array_5, i, "temp")
 
-    data_1.to_csv(f"../data/label_1/ticked_data/data_1_{i}.csv", index=False)
-    data_2.to_csv(f"../data/label_1/ticked_data/data_2_{i}.csv", index=False)
-    data_3.to_csv(f"../data/label_1/ticked_data/data_3_{i}.csv", index=False)
-    data_4.to_csv(f"../data/label_1/ticked_data/data_4_{i}.csv", index=False)
-    data_5.to_csv(f"../data/label_1/ticked_data/data_5_{i}.csv", index=False)
+            np.savetxt(f"../data/label_1/ticked_data/data_1_{i}.csv", data_1, delimiter=",", fmt="%s")
+            np.savetxt(f"../data/label_1/ticked_data/data_2_{i}.csv", data_2, delimiter=",", fmt="%s")
+            np.savetxt(f"../data/label_1/ticked_data/data_3_{i}.csv", data_3, delimiter=",", fmt="%s")
+            np.savetxt(f"../data/label_1/ticked_data/data_4_{i}.csv", data_4, delimiter=",", fmt="%s")
+            np.savetxt(f"../data/label_1/ticked_data/data_5_{i}.csv", data_5, delimiter=",", fmt="%s")
 
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
-print("Start Time =", current_time)
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
+    else:
+        df_1 = pd.read_excel("../data/raw_data/test.xlsx")
+        numpy_array_1 = df_1.to_numpy()
+        data_1 = tick_label(numpy_array_1, 20, "blood")
+        np.savetxt(f"../data/label_1/ticked_data/test.csv", data_1, delimiter=",", fmt="%s")

@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 from tqdm import tqdm
 
@@ -38,21 +40,49 @@ def fill_missing_rows(data):
     return filled_data
 
 
-for i in [1, 2, 3, 4, 5]:
-    for j in [20, 24, 30, 36, 48]:
-        data = pd.read_csv(f"../data/label_1/ticked_data/data_{i}_{j}.csv", header=None)
-        print(data[:3])
+def run_step3_label_1(not_test=True):
+    if not_test:
+        data_dirs = ["../data", "../data/label_1", "../data/label_1/filled_data"]  # 定义需要检查的目录列表
+
+        for directory in data_dirs:  # 检查并创建目录
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+                print(f"Directory '{directory}' created.")
+
+        for i in [1, 2, 3, 4, 5]:
+            for j in [20, 24, 30, 36, 48]:
+                data = pd.read_csv(f"../data/label_1/ticked_data/data_{i}_{j}.csv")
+                first_row = data.iloc[0].values
+
+                data_np = data.to_numpy()
+
+                result = fill_missing_rows(data_np)
+                if i == 1:
+                    column = ['stay_id', 'sbp', 'dbp', 'map', 'time', 'label']
+                elif i == 2:
+                    column = ['stay_id', 'hr', 'time', 'label']
+                elif i == 3:
+                    column = ['stay_id', 'rr', 'time', 'label']
+                elif i == 4:
+                    column = ['stay_id', 'spo2', 'time', 'label']
+                elif i == 5:
+                    column = ['stay_id', 'temp', 'time', 'label']
+                result_df = pd.DataFrame(result, columns=column)
+                result_df.to_csv(f"../data/label_1/filled_data/filled_data_{i}_{j}.csv", index=False)
+
+                print(result_df[:3])
+    else:
+        data = pd.read_csv(f"../data/label_1/ticked_data/test.csv", header=None)
         first_row = data.iloc[0].values
 
         data_np = data.to_numpy()
 
         result = fill_missing_rows(data_np)
-
-        result_df = pd.DataFrame(result, columns=data.columns)
-        result_df[['stay_id', 'time', 'label']] = result_df[['stay_id', 'time', 'label']].astype(int)
+        column_names = ['stay_id', 'sbp', 'dbp', 'map', 'time', 'label']
+        result_df = pd.DataFrame(result, columns=column_names)
+        # result_df[['stay_id', 'time', 'label']] = result_df[['stay_id', 'time', 'label']].astype(int)
 
         # results = [first_row] + result
-        result_df.to_csv(f"../data/label_1/filled_data/filled_data_{i}-{j}.csv", index=False)
+        result_df.to_csv(f"../data/label_1/filled_data/test.csv", index=False)
 
         print(result_df[:3])
-
