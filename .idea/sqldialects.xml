@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/data_label_1/step1.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/data_label_1/step1_label_1.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/data_label_time_diff/step1.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>

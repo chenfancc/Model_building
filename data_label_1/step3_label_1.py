@@ -1,4 +1,5 @@
 import pandas as pd
+from tqdm import tqdm
 
 
 def fill_missing_rows(data):
@@ -7,7 +8,7 @@ def fill_missing_rows(data):
     prev_time = None
     prev_label = None
     total_count = 0
-    for row in data:
+    for row in tqdm(data):
         id_, time, *other_cols, label = row
 
         if prev_id is None:
@@ -38,8 +39,8 @@ def fill_missing_rows(data):
 
 
 for i in [1, 2, 3, 4, 5]:
-    for j in [4, 6, 8, 12, 24]:
-        data = pd.read_csv(f"data_46812/data_{i}—{j}.csv")
+    for j in [20, 24, 30, 36, 48]:
+        data = pd.read_csv(f"../data/label_1/ticked_data/data_{i}_{j}.csv", header=None)
         print(data[:3])
         first_row = data.iloc[0].values
 
@@ -51,7 +52,7 @@ for i in [1, 2, 3, 4, 5]:
         result_df[['stay_id', 'time', 'label']] = result_df[['stay_id', 'time', 'label']].astype(int)
 
         # results = [first_row] + result
-        result_df.to_csv(f"filled_data_{i}-{j}.csv", index=False)
+        result_df.to_csv(f"../data/label_1/filled_data/filled_data_{i}-{j}.csv", index=False)
 
         print(result_df[:3])
 
