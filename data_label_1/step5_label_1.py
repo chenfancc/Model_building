@@ -1,3 +1,4 @@
+import os
 import time
 
 import numpy as np
@@ -67,7 +68,7 @@ def replace_abnormal(data):
     feature_cols = ['sbp', 'dbp', 'map', 'hr', 'rr', 'spo2', 'temp']
 
     # 定义异常值的上下限
-    lower_limit = {'sbp': 30, 'dbp': 30, 'map': 30, 'hr': 20, 'rr': 5, 'spo2': 10, 'temp': 25}
+    lower_limit = {'sbp': 30, 'dbp': 30, 'map': 30, 'hr': 5, 'rr': 3, 'spo2': 5, 'temp': 15}
     upper_limit = {'sbp': 300, 'dbp': 300, 'map': 300, 'hr': 300, 'rr': 60, 'spo2': 100, 'temp': 45}
 
     # 处理异常值
@@ -107,9 +108,15 @@ def normalize_data(data):
 
 start_time = time.time()
 time_list = []
+data_dirs = ["../data", "../data/label_1", "../data/label_1/merged_data/"]  # 定义需要检查的目录列表
 
-for i in tqdm([4, 6, 8, 12, 24]):
-    data_row = pd.read_csv(f"merged_data/merged_data_{i}.csv")
+for directory in data_dirs:  # 检查并创建目录
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        print(f"Directory '{directory}' created.")
+
+for i in tqdm([20, 24, 30, 36, 48]):
+    data_row = pd.read_csv(f"../data/label_1/merged_data/merged_data_{i}.csv")
     data_1 = horizon_fill(data_row)
     data_2 = drop_row(data_1)
     data_3 = replace_abnormal(data_2)
