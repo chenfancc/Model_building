@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 import numpy as np
 import torch
@@ -52,26 +54,29 @@ def splited_tensor(data, train_rate, val_rate):
     return data_tensor_train, label_tensor_train, data_tensor_val, label_tensor_val, data_tensor_test, label_tensor_test
 
 
-# 预测时间步：24h
-TIME_STEPS = 24
-# 通道数：
-NUM_FEATURES = 7
-# i：结果时间步
-for i in [4, 6, 8, 12, 24]:
-    data_row = pd.read_csv(f"pure_data/pure_data_{i}.csv")
-    data = data_row.to_numpy()
+def run_step6_label_1():
+    # 预测时间步：24h
+    TIME_STEPS = 24
+    # 通道数：
+    NUM_FEATURES = 7
+    # i：结果时间步
+    for i in [20, 24, 30, 36, 48]:
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
+        data_row = pd.read_csv(f"../data/label_1/pure_data/pure_data_{i}.csv")
+        data = data_row.to_numpy()
 
-    data_tensor_train, label_tensor_train, data_tensor_val, label_tensor_val, data_tensor_test, label_tensor_test = splited_tensor(
-        data, 0.8, 0.1)
+        data_tensor_train, label_tensor_train, data_tensor_val, label_tensor_val, data_tensor_test, label_tensor_test = splited_tensor(
+            data, 0.8, 0.1)
 
-    data_tensor, label_tensor = build_tensor_tqdm_gpt(data)
+        data_tensor, label_tensor = build_tensor_tqdm_gpt(data)
 
-    file = f"data_tensor_{i}.pth"
-    torch.save({'data_tensor_train': data_tensor_train,
-                'label_tensor_train': label_tensor_train,
-                'data_tensor_val': data_tensor_val,
-                'label_tensor_val': label_tensor_val,
-                'data_tensor_test': data_tensor_test,
-                'label_tensor_test': label_tensor_test,
-                'data_tensor_cell': data_tensor,
-                'label_tensor_cell': label_tensor}, file)
+        file = f"data_tensor_{i}.pth"
+        torch.save({'data_tensor_train': data_tensor_train,
+                    'label_tensor_train': label_tensor_train,
+                    'data_tensor_val': data_tensor_val,
+                    'label_tensor_val': label_tensor_val,
+                    'data_tensor_test': data_tensor_test,
+                    'label_tensor_test': label_tensor_test,
+                    'data_tensor_cell': data_tensor,
+                    'label_tensor_cell': label_tensor}, file)

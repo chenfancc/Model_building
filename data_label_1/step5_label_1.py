@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -105,24 +106,33 @@ def normalize_data(data):
     # 转换为np数组并返回
     return data_pd
 
+def run_step5_label_1():
 
-start_time = time.time()
-time_list = []
-data_dirs = ["../data", "../data/label_1", "../data/label_1/merged_data/"]  # 定义需要检查的目录列表
+    start_time = time.time()
+    time_list = []
+    data_dirs = ["../data", "../data/label_1", "../data/label_1/pure_data/"]  # 定义需要检查的目录列表
 
-for directory in data_dirs:  # 检查并创建目录
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"Directory '{directory}' created.")
+    for directory in data_dirs:  # 检查并创建目录
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            print(f"Directory '{directory}' created.")
 
-for i in tqdm([20, 24, 30, 36, 48]):
-    data_row = pd.read_csv(f"../data/label_1/merged_data/merged_data_{i}.csv")
-    data_1 = horizon_fill(data_row)
-    data_2 = drop_row(data_1)
-    data_3 = replace_abnormal(data_2)
-    data_4 = fill_isnan(data_3)
-    data_5 = normalize_data(data_4)
-    np.savetxt(f"pure_data/pure_data_{i}.csv", data_5, delimiter=",", fmt="%s")
-    time_list.append(time.time() - start_time)
+    for i in tqdm([20, 24, 30, 36, 48]):
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("Start Time =", current_time)
+        data_row = pd.read_csv(f"../data/label_1/merged_data/merged_data_{i}.csv")
+        data_1 = horizon_fill(data_row)
+        print("horizon_fill has completed")
+        data_2 = drop_row(data_1)
+        print("drop_row has completed")
+        data_3 = replace_abnormal(data_2)
+        print("replace_abnormal has completed")
+        data_4 = fill_isnan(data_3)
+        print("fill_isnan has completed")
+        data_5 = normalize_data(data_4)
+        print("normalize_data has completed")
+        np.savetxt(f"../data/label_1/pure_data/pure_data_{i}.csv", data_5, delimiter=",", fmt="%s")
+        print(f"pure_data_{i} has saved")
+        time_list.append(time.time() - start_time)
 
-print(time_list)
+    print(time_list)

@@ -7,10 +7,8 @@
     <list default="true" id="2da6e861-88c1-40d2-8fb9-dbac2ababe18" name="更改" comment="1.0">
       <change afterPath="$PROJECT_DIR$/data_label_1/data_tensor.pth" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_label_1/step2_label_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/step2_label_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_label_1/step3_label_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/step3_label_1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_label_1/step4_label_1.sql" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/step4_label_1.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_label_1/step5_label_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/step5_label_1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_label_1/step6_label_1.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/step6_label_1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_label_1/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_label_1/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,48 +50,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Python 测试.Doctests (KAN 内).executor&quot;: &quot;Debug&quot;,
-    &quot;Python.111.executor&quot;: &quot;Run&quot;,
-    &quot;Python.aaaaaaaa.executor&quot;: &quot;Run&quot;,
-    &quot;Python.bbb.executor&quot;: &quot;Run&quot;,
-    &quot;Python.eval.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.model.executor&quot;: &quot;Run&quot;,
-    &quot;Python.step2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.step2_label_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.step3_label_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.step5_label_1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.train_net.executor&quot;: &quot;Run&quot;,
-    &quot;Python.val.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;Excel (xlsx)&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/deeplearning/Model_building/data/raw_data&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;数据库脚本.step4_label_1.sql.executor&quot;: &quot;Run&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python 测试.Doctests (KAN 内).executor": "Debug",
+    "Python.111.executor": "Run",
+    "Python.aaaaaaaa.executor": "Run",
+    "Python.bbb.executor": "Run",
+    "Python.eval.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.model.executor": "Run",
+    "Python.step2.executor": "Run",
+    "Python.step2_label_1.executor": "Run",
+    "Python.step3_label_1.executor": "Run",
+    "Python.step5_label_1.executor": "Debug",
+    "Python.test.executor": "Run",
+    "Python.train_net.executor": "Run",
+    "Python.val.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "database.data.extractors.current.export.id": "Excel (xlsx)",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "E:/deeplearning/Model_building/data/raw_data",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "database.query.execution",
+    "vue.rearranger.settings.migration": "true",
+    "数据库脚本.step4_label_1.sql.executor": "Run"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ],
-    &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;98e9fb63-4085-482f-bae4-5eddb2d8f027/database/\&quot;mimic_iv\&quot;/schema/\&quot;public\&quot;&quot;,
-      &quot;98e9fb63-4085-482f-bae4-5eddb2d8f027/database/\&quot;postgres\&quot;/schema/\&quot;public\&quot;&quot;
+    "RunConfigurationTargetLRU": [
+      "98e9fb63-4085-482f-bae4-5eddb2d8f027/database/\"mimic_iv\"/schema/\"public\"",
+      "98e9fb63-4085-482f-bae4-5eddb2d8f027/database/\"postgres\"/schema/\"public\""
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\deeplearning\Model_building\data_label_time_diff" />
@@ -261,7 +259,7 @@
       <workItem from="1715579240804" duration="2230000" />
       <workItem from="1715617528439" duration="6461000" />
       <workItem from="1715647314630" duration="4276000" />
-      <workItem from="1715661750944" duration="4225000" />
+      <workItem from="1715661750944" duration="6267000" />
     </task>
     <task id="LOCAL-00001" summary="1.0">
       <option name="closed" value="true" />
@@ -383,7 +381,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715623962687</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="1.0">
+      <option name="closed" value="true" />
+      <created>1715673429212</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1715673429212</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -428,8 +434,8 @@
     <SUITE FILE_PATH="coverage/Model_building$eval.coverage" NAME="eval 覆盖结果" MODIFIED="1715106014195" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Model_building$Doctests__KAN__.coverage" NAME="Doctests (KAN 内) 覆盖结果" MODIFIED="1715164547906" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/miniconda3/envs/pythonProject1/Lib/site-packages/kan" />
     <SUITE FILE_PATH="coverage/Model_building$bbb.coverage" NAME="bbb 覆盖结果" MODIFIED="1715109355978" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/draft" />
-    <SUITE FILE_PATH="coverage/Model_building$test.coverage" NAME="test 覆盖结果" MODIFIED="1715673259898" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_label_1" />
-    <SUITE FILE_PATH="coverage/Model_building$step5_label_1.coverage" NAME="step5_label_1 覆盖结果" MODIFIED="1715658171092" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_label_1" />
+    <SUITE FILE_PATH="coverage/Model_building$test.coverage" NAME="test 覆盖结果" MODIFIED="1715702650588" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_label_1" />
+    <SUITE FILE_PATH="coverage/Model_building$step5_label_1.coverage" NAME="step5_label_1 覆盖结果" MODIFIED="1715702372777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_label_1" />
     <SUITE FILE_PATH="coverage/Model_building$step3_label_1.coverage" NAME="step3_label_1 覆盖结果" MODIFIED="1715622608157" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data_label_1" />
   </component>
 </project>
