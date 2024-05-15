@@ -76,7 +76,7 @@ def validation(data_loader, model, model_name, idx):
     predicted_probs = []
     # 对测试数据进行预测
     with torch.no_grad():
-        for data, targets in data_loader:
+        for data, targets in tqdm(data_loader):
             data = data.float()
             targets = targets.long()
             outputs = model(data).float()
@@ -88,7 +88,7 @@ def validation(data_loader, model, model_name, idx):
 
     fpr, tpr, thresholds = roc_curve(true_labels_flat, predicted_probs_flat)
     roc_auc = auc(fpr, tpr)
-    best_threshold_index = (10 * tpr - fpr).argmax()
+    best_threshold_index = (tpr - fpr).argmax()
     best_threshold = thresholds[best_threshold_index]
 
     print(f"AUC: {roc_auc:.2f}")

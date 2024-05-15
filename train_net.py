@@ -102,7 +102,7 @@ def train_val_net_old(model_name, epoch, model, train_dataloader, val_dataloader
     }
     return info
 
-def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer):
+def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer, scheduler):
     total_train_step = 0
     train_loss_list = []
     train_loss_total_list = []
@@ -136,6 +136,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
             total_train_step += 1
             if total_train_step % 100 == 0:
                 print("训练次数：{}, Loss: {}, Device:{}".format(total_train_step, loss.item(), loss.device))
+        scheduler.step()
         train_loss_list.append(loss.item())
         model.eval()
         eps = 1e-6
