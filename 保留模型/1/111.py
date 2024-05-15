@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from main import main_data_loader
 
-train_dataloader, val_dataloader, test_dataloader = main_data_loader(24 ,"less", True)
+train_dataloader, val_dataloader, test_dataloader = main_data_loader(24, "less", True)
 model = torch.load("BiLSTM_softmax_24_8.pth", map_location="cpu")
 
 model.eval()  # 设置为评估模式
@@ -68,7 +68,6 @@ plt.title('Receiver Operating Characteristic (ROC)')
 plt.legend(loc="lower right")
 plt.show()
 
-
 # 计算混淆矩阵
 TP_val = np.sum((predicted_probs_flat_val > best_threshold_val) & (true_labels_flat_val == 1))
 FP_val = np.sum((predicted_probs_flat_val > best_threshold_val) & (true_labels_flat_val == 0))
@@ -87,16 +86,6 @@ print("Validation Specificity:", specificity_val)
 print("Validation Sensitivity:", sensitivity_val)
 print("Validation Accuracy:", accuracy_val)
 
-# 绘制验证集混淆矩阵
-plt.figure(figsize=(6, 5))
-sns.heatmap(confusion_matrix_val, annot=True, cmap="Blues", fmt="d",
-            xticklabels=["Predicted Negative", "Predicted Positive"],
-            yticklabels=["Actual Negative", "Actual Positive"],
-            annot_kws={"size": 14, "color": 'red'})
-plt.xlabel("Predicted Label")
-plt.ylabel("True Label")
-plt.title("Validation Confusion Matrix")
-plt.show()
 
 # 计算测试集混淆矩阵
 TP_test = np.sum((predicted_probs_flat_test > best_threshold_test) & (true_labels_flat_test == 1))
@@ -116,19 +105,9 @@ print("Test Specificity:", specificity_test)
 print("Test Sensitivity:", sensitivity_test)
 print("Test Accuracy:", accuracy_test)
 
-# 绘制测试集混淆矩阵
-plt.figure(figsize=(6, 5))
-sns.heatmap(confusion_matrix_test, annot=True, cmap="Blues", fmt="d",
-            xticklabels=["Predicted Negative", "Predicted Positive"],
-            yticklabels=["Actual Negative", "Actual Positive"],
-            annot_kws={"size": 14, "color": 'red'})
-plt.xlabel("Predicted Label")
-plt.ylabel("True Label")
-plt.title("Test Confusion Matrix")
-plt.show()
-
 for i in range(10):
     free_thresholds = i/10
+    print(f"-------------------阈值分数为{i*10}:-------------------")
     # 计算混淆矩阵
     TP_val = np.sum((predicted_probs_flat_val > free_thresholds) & (true_labels_flat_val == 1))
     FP_val = np.sum((predicted_probs_flat_val > free_thresholds) & (true_labels_flat_val == 0))
@@ -146,17 +125,6 @@ for i in range(10):
     print("Validation Specificity:", specificity_val)
     print("Validation Sensitivity:", sensitivity_val)
     print("Validation Accuracy:", accuracy_val)
-
-    # 绘制验证集混淆矩阵
-    plt.figure(figsize=(6, 5))
-    sns.heatmap(confusion_matrix_val, annot=True, cmap="Blues", fmt="d",
-                xticklabels=["Predicted Negative", "Predicted Positive"],
-                yticklabels=["Actual Negative", "Actual Positive"],
-                annot_kws={"size": 14, "color": 'red'})
-    plt.xlabel("Predicted Label")
-    plt.ylabel("True Label")
-    plt.title("Validation Confusion Matrix")
-    plt.show()
 
     # 计算测试集混淆矩阵
     TP_test = np.sum((predicted_probs_flat_test > free_thresholds) & (true_labels_flat_test == 1))
@@ -176,13 +144,41 @@ for i in range(10):
     print("Test Sensitivity:", sensitivity_test)
     print("Test Accuracy:", accuracy_test)
 
-    # 绘制测试集混淆矩阵
-    plt.figure(figsize=(6, 5))
-    sns.heatmap(confusion_matrix_test, annot=True, cmap="Blues", fmt="d",
-                xticklabels=["Predicted Negative", "Predicted Positive"],
-                yticklabels=["Actual Negative", "Actual Positive"],
-                annot_kws={"size": 14, "color": 'red'})
-    plt.xlabel("Predicted Label")
-    plt.ylabel("True Label")
-    plt.title("Test Confusion Matrix")
-    plt.show()
+for i in range(10):
+    free_thresholds = i/100 + 0.4
+    print(f"-------------------阈值分数为{i+40}:-------------------")
+    # 计算混淆矩阵
+    TP_val = np.sum((predicted_probs_flat_val > free_thresholds) & (true_labels_flat_val == 1))
+    FP_val = np.sum((predicted_probs_flat_val > free_thresholds) & (true_labels_flat_val == 0))
+    TN_val = np.sum((predicted_probs_flat_val <= free_thresholds) & (true_labels_flat_val == 0))
+    FN_val = np.sum((predicted_probs_flat_val <= free_thresholds) & (true_labels_flat_val == 1))
+
+    confusion_matrix_val = np.array([[TN_val, FP_val], [FN_val, TP_val]])
+    print("Validation Confusion Matrix:")
+    print(confusion_matrix_val)
+
+    specificity_val = TN_val / (TN_val + FP_val)
+    sensitivity_val = TP_val / (TP_val + FN_val)
+    accuracy_val = (TP_val + TN_val) / (TP_val + TN_val + FP_val + FN_val)
+
+    print("Validation Specificity:", specificity_val)
+    print("Validation Sensitivity:", sensitivity_val)
+    print("Validation Accuracy:", accuracy_val)
+
+    # 计算测试集混淆矩阵
+    TP_test = np.sum((predicted_probs_flat_test > free_thresholds) & (true_labels_flat_test == 1))
+    FP_test = np.sum((predicted_probs_flat_test > free_thresholds) & (true_labels_flat_test == 0))
+    TN_test = np.sum((predicted_probs_flat_test <= free_thresholds) & (true_labels_flat_test == 0))
+    FN_test = np.sum((predicted_probs_flat_test <= free_thresholds) & (true_labels_flat_test == 1))
+
+    confusion_matrix_test = np.array([[TN_test, FP_test], [FN_test, TP_test]])
+    print("Test Confusion Matrix:")
+    print(confusion_matrix_test)
+
+    specificity_test = TN_test / (TN_test + FP_test)
+    sensitivity_test = TP_test / (TP_test + FN_test)
+    accuracy_test = (TP_test + TN_test) / (TP_test + TN_test + FP_test + FN_test)
+
+    print("Test Specificity:", specificity_test)
+    print("Test Sensitivity:", sensitivity_test)
+    print("Test Accuracy:", accuracy_test)
