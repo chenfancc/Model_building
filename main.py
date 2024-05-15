@@ -1,6 +1,6 @@
 import time
 from datetime import datetime
-from oversample import balance_data
+from sampled import *
 from model import *
 from train_net import train_val_net
 from figure import plot_figure
@@ -9,8 +9,8 @@ from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
 BATCH_SIZE = 128
-EPOCH = 50
-LR = 1e-3
+EPOCH = 100
+LR = 1e-2
 device = "cuda"
 
 
@@ -26,7 +26,7 @@ def main_data_loader(data_idx):
     # data_label_1 = data_label_1['data_tensor_cell']
     # label = data_label_1['label_tensor_cell']
 
-    data_train_b, label_train_b = balance_data(data_train, label_train)
+    data_train_b, label_train_b = less_balance_data(data_train, label_train)
 
     dataset_train = TensorDataset(data_train_b, label_train_b)
     dataset_val = TensorDataset(data_val, label_val)
@@ -59,7 +59,7 @@ def train_BiLSTM_BN(data_idx=0):
     my_model = BiLSTM_BN()
     my_model.to(device)
     loss_fn = nn.BCELoss()
-    optimizer = torch.optim.SGD(my_model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(my_model.parameters(), lr=LR)
 
     start_time = time.time()
     info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer)
@@ -92,7 +92,7 @@ def train_BiLSTM_CNN_Transformer():
 
 
 if __name__ == '__main__':
-    for i in [4, 6, 8, 12, 24]:
+    for i in [20, 24, 30, 36, 48]:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
         print("Start Time =", current_time)
         train_dataloader, val_dataloader, test_dataloader = main_data_loader(i)
