@@ -1,0 +1,6 @@
+BATCH_SIZE = 128
+EPOCH = 20
+LR = 5e-3
+GAMMA = 0.1
+STEP_SIZE = 5  # 每隔多少个 epoch 衰减一次学习率
+device = "cuda"
