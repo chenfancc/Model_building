@@ -113,6 +113,7 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
     alarm_acc_list = []
 
     for i in range(epoch):
+        best_loss = 1e5
         assert epoch is not None and epoch > 0, "EPOCH错误"
         print("-------第 {} 轮训练开始-------".format(i + 1))
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
@@ -139,21 +140,21 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
         scheduler.step()
         train_loss_list.append(loss.item())
         model.eval()
+        model.to("cuda")
         eps = 1e-6
         total_val_loss = eps
-        true_labels = []
         count = 0
         with torch.no_grad():
             for item in val_dataloader:
                 count += 1
                 data, targets = item
-                data = data.float()
-                targets = targets.long()
-                if torch.cuda.is_available():
-                    data = data.cuda()
-                    targets = targets.cuda()
+                data = data.float().cuda()
+                targets = targets.long().cuda()
+                # if torch.cuda.is_available():
+                #     data = data.cuda()
+                #     targets = targets.cuda()
                 outputs = model(data)
-                true_labels.append(targets.cpu().numpy())
+                # true_labels.append(targets.cpu().numpy())
                 loss = loss_fn(outputs, targets.float())
                 total_val_loss = total_val_loss + loss.item()
             print("整体测试集上的Loss: {}".format(total_val_loss / count))
@@ -179,31 +180,134 @@ def train_val_net(model_name, epoch, model, train_dataloader, val_dataloader, lo
     }
     return info
 
+def train_best_val_net(model_name, epoch, model, best_model, train_dataloader, val_dataloader, loss_fn, optimizer, scheduler):
+    total_train_step = 0
+    train_loss_list = []
+    train_loss_total_list = []
+    val_loss_list = []
+    accuracy_list = []
+    specificity_list = []
+    alarm_sen_list = []
+    alarm_acc_list = []
+
+    for i in range(epoch):
+        best_loss = 1e5
+        assert epoch is not None and epoch > 0, "EPOCH错误"
+        print("-------第 {} 轮训练开始-------".format(i + 1))
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("开始时间", current_time)
+        model.train()
+        model.to("cuda")
+        for item in train_dataloader:
+            data, targets = item
+            data = data.float()
+            targets = targets.long()
+            if torch.cuda.is_available():
+                data = data.cuda()
+                targets = targets.cuda()
+            outputs = model(data)
+            loss = loss_fn(outputs, targets.float())
+            if loss.item() < best_loss:
+                best_loss = loss.item()
+                best_model.load_state_dict(model.state_dict())
+            train_loss_total_list.append(loss.item())
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+            total_train_step += 1
+            if total_train_step % 100 == 0:
+                print("训练次数：{}, Loss: {}, Device:{}".format(total_train_step, loss.item(), loss.device))
+        scheduler.step()
+        train_loss_list.append(loss.item())
+        best_model.eval()
+        best_model.to("cuda")
+        eps = 1e-6
+        total_val_loss = eps
+        true_labels = []
+        count = 0
+        with torch.no_grad():
+            for item in val_dataloader:
+                count += 1
+                data, targets = item
+                data = data.float()
+                targets = targets.long()
+                if torch.cuda.is_available():
+                    data = data.cuda()
+                    targets = targets.cuda()
+                outputs = best_model(data)
+                true_labels.append(targets.cpu().numpy())
+                loss = loss_fn(outputs, targets.float())
+                total_val_loss = total_val_loss + loss.item()
+            print("整体测试集上的Loss: {}".format(total_val_loss / count))
+            val_loss_list.append(total_val_loss / count)
+            model_directory = f"./{model_name}/"
+            if not os.path.exists(model_directory):
+                os.makedirs(model_directory)
+            _, specificity, sensitivity, alarm_accuracy, accuracy = validation(val_dataloader, best_model.to("cpu"), model_name, i)
+            accuracy_list.append(accuracy)
+            specificity_list.append(specificity)
+            alarm_sen_list.append(sensitivity)
+            alarm_acc_list.append(alarm_accuracy)
+            torch.save(best_model, f"{model_name}/{model_name}_{i}.pth")
+            print("模型已保存")
+    info = {
+        "train_loss_list": train_loss_list,
+        "val_loss_list": val_loss_list,
+        "accuracy_list": accuracy_list,
+        "specificity_list": specificity_list,
+        "alarm_sen_list": alarm_sen_list,
+        "alarm_acc_list": alarm_acc_list,
+        "train_loss_total_list": train_loss_total_list
+    }
+    return info
 import torch.cuda
 from torch.utils.tensorboard import SummaryWriter
 
 
-def train_net(model_name, epoch_total, model, train_dataloader, val_dataloader, loss_fn, optimizer, device):
-    for epoch in range(epoch_total):
-        model.train()  # 设置模型为训练模式
-        running_loss = 0.0
-
-        for data, label in tqdm(train_dataloader, desc=f'Epoch {epoch + 1}/{epoch_total}'):
-            data, label = data.to(device), label.to(device)
-            optimizer.zero_grad()  # 梯度清零
-
-            # 正向传播
+def train_net(model_name, epoch, model, train_dataloader, val_dataloader, loss_fn, optimizer, scheduler):
+    total_train_step = 0
+    best_model_idx = 0
+    train_loss_list = []
+    train_loss_total_list = []
+    model_directory = f"./{model_name}/"
+    if not os.path.exists(model_directory):
+        os.makedirs(model_directory)
+    for i in range(epoch):
+        best_loss = 1e5
+        assert epoch is not None and epoch > 0, "EPOCH错误"
+        print("-------第 {} 轮训练开始-------".format(i + 1))
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
+        print("开始时间", current_time)
+        model.train()
+        model.to("cuda")
+        for item in train_dataloader:
+            data, targets = item
+            data = data.float()
+            targets = targets.long()
+            if torch.cuda.is_available():
+                data = data.cuda()
+                targets = targets.cuda()
             outputs = model(data)
-            # print(outputs.shape, label.shape)
-            loss = loss_fn(outputs, label)
+            loss = loss_fn(outputs, targets.float())
+            if loss.item() < best_loss:
+                best_loss = loss.item()
+                torch.save(model, f"{model_name}/{model_name}_{best_model_idx}.pth")
+                best_model_idx += 1
+                print("模型已保存")
 
-            # 反向传播和优化
+            train_loss_total_list.append(loss.item())
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
-            running_loss += loss.item() * data.size(0)
-
-        # 计算平均损失
-        epoch_loss = running_loss / len(train_dataloader.dataset)
-        print(f'Epoch [{epoch + 1}/{epoch_total}], Loss: {epoch_loss:.4f}')
-    torch.save(model, f"{model_name}.pth")
+            total_train_step += 1
+            if total_train_step % 100 == 0:
+                print("训练次数：{}, Loss: {}, Device:{}".format(total_train_step, loss.item(), loss.device))
+        scheduler.step()
+        train_loss_list.append(loss.item())
+    info = {
+        "train_loss_list": train_loss_list,
+        "train_loss_total_list": train_loss_total_list
+    }
+    return info

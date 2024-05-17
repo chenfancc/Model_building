@@ -4,7 +4,7 @@ from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 from simulation_data import synthetic_data
 from model import BiLSTM, LSTMClassifier
-from train_net import train_net, train_val_net
+from train_net import train_val_net
 
 if __name__ == '__main__':
     data_train, label_train = synthetic_data(100, 24, 7, 0.3)

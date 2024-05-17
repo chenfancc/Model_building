@@ -5,7 +5,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from sampled import *
 from model import *
-from train_net import train_val_net
+from train_net import *
 from figure import plot_figure
 import torch
 from torch import nn
@@ -17,10 +17,10 @@ LR = 0.001
 GAMMA = 0
 STEP_SIZE = 10  # 每隔多少个 epoch 衰减一次学习率
 device = "cuda"
-SAMPLE_METHOD = "over"
+SAMPLE_METHOD = "less"
 
 
-def main_data_loader(data_idx, sample_method,out_use=False):
+def main_data_loader(data_idx, sample_method, out_use=False):
     if out_use:
         data = torch.load(f'E:\deeplearning\Model_building\data_label_1/data_tensor_{data_idx}.pth')
     else:
@@ -51,32 +51,19 @@ def main_data_loader(data_idx, sample_method,out_use=False):
     return train_dataloader_f, val_dataloader_f, test_dataloader_f
 
 
-def train_BiLSTM(data_idx=0):
-    model_name = f"BiLSTM_{data_idx}"
-    my_model = BiLSTM()
-    my_model.to(device)
-    loss_fn = nn.BCELoss()
-    optimizer = torch.optim.SGD(my_model.parameters(), lr=LR)
-
+def train_model_best(model_name, model, loss=nn.BCELoss, optimizer = torch.optim.Adam, scheduler = StepLR, best=True):
+    my_model = model().to(device)
+    if best: best_model = model().to(device)
     start_time = time.time()
-    info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Training finished in {elapsed_time:.2f} seconds.")
-    plot_figure(info, model_name)
-
-
-def train_BiLSTM_BN(data_idx=0):
-    model_name = f"BiLSTM_BN_{SAMPLE_METHOD}sample_{data_idx}"
-
-    my_model = BiLSTM_BN()
-    my_model.to(device)
-    loss_fn = nn.BCELoss()
-    optimizer = torch.optim.Adam(my_model.parameters(), lr=LR)
-    scheduler = StepLR(optimizer, step_size=STEP_SIZE, gamma=GAMMA)
-
-    start_time = time.time()
-    info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer, scheduler)
+    loss_fn = loss()
+    optimizer_fn = optimizer(my_model.parameters(), lr=LR)
+    scheduler_fn = scheduler(optimizer_fn, step_size=STEP_SIZE, gamma=GAMMA)
+    if best:
+        info = train_best_val_net(model_name, EPOCH, my_model, best_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn,
+                         scheduler_fn)
+    else:
+        info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn,
+                         scheduler_fn)
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Training finished in {elapsed_time:.2f} seconds.")
@@ -96,29 +83,6 @@ def train_BiLSTM_BN(data_idx=0):
         json.dump(hyperparameters, json_file, indent=4)
 
 
-
-def train_BiLSTM_CNN_Transformer():
-    model_name = "BiLSTM_CNN_Transformer"
-    my_model = BiLSTM_CNN_Transformer(7, 128, 2,
-                                      0.5, 10, 3,
-                                      1, 3, 8,
-                                      4, 0.3, 3)
-    my_model.to(device)
-    loss_fn = nn.BCELoss()
-    optimizer = torch.optim.SGD(my_model.parameters(), lr=0.1)
-
-    start_time = time.time()
-    info = train_val_net(model_name, EPOCH, BiLSTM_CNN_Transformer, train_dataloader, val_dataloader, loss_fn,
-                         optimizer)
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Training finished in {elapsed_time:.2f} seconds.")
-    plot_figure(info, model_name)
-
-
-# def train_KAN():
-
-
 if __name__ == '__main__':
     for i in [20, 24, 30, 36, 48]:
         print(f"--------------------------------------------------------------------"
@@ -133,6 +97,6 @@ if __name__ == '__main__':
         print(BATCH_SIZE)
         print(GAMMA)
         print(STEP_SIZE)
-        train_BiLSTM_BN(i)
+        train_model_best(f"BiLSTM_BN_3layers_best_model_{SAMPLE_METHOD}sample_{i}", BiLSTM_BN_3layers)
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
         print("Start Time =", current_time)
