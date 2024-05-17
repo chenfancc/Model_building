@@ -12,10 +12,11 @@ from torch import nn
 from torch.utils.data import TensorDataset, DataLoader
 
 BATCH_SIZE = 256
-EPOCH = 20
-LR = 0.001
-GAMMA = 0
-STEP_SIZE = 10  # 每隔多少个 epoch 衰减一次学习率
+EPOCH = 50
+LR = 1e-5
+GAMMA = 0.5
+STEP_SIZE = 5  # 每隔多少个 epoch 衰减一次学习率
+DECAY = 1e-4
 device = "cuda"
 SAMPLE_METHOD = "less"
 
@@ -51,19 +52,24 @@ def main_data_loader(data_idx, sample_method, out_use=False):
     return train_dataloader_f, val_dataloader_f, test_dataloader_f
 
 
-def train_model_best(model_name, model, loss=nn.BCELoss, optimizer = torch.optim.Adam, scheduler = StepLR, best=True):
+def train_model_best(model_name, model, loss=nn.BCELoss, optimizer = torch.optim.Adam, scheduler = StepLR, best=True, val=True):
     my_model = model().to(device)
     if best: best_model = model().to(device)
     start_time = time.time()
     loss_fn = loss()
-    optimizer_fn = optimizer(my_model.parameters(), lr=LR)
+    optimizer_fn = optimizer(my_model.parameters(), lr=LR, weight_decay=DECAY)
     scheduler_fn = scheduler(optimizer_fn, step_size=STEP_SIZE, gamma=GAMMA)
     if best:
-        info = train_best_val_net(model_name, EPOCH, my_model, best_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn,
-                         scheduler_fn)
+        if val:
+            info = train_best_val_net(model_name, EPOCH, my_model, best_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn, scheduler_fn)
+        else:
+            info = train_best_net(model_name, EPOCH, my_model, best_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn, scheduler_fn)
     else:
-        info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn,
-                         scheduler_fn)
+        if val:
+            info = train_val_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn, scheduler_fn)
+        else:
+            info = train_net(model_name, EPOCH, my_model, train_dataloader, val_dataloader, loss_fn, optimizer_fn, scheduler_fn)
+
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Training finished in {elapsed_time:.2f} seconds.")
@@ -97,6 +103,8 @@ if __name__ == '__main__':
         print(BATCH_SIZE)
         print(GAMMA)
         print(STEP_SIZE)
-        train_model_best(f"BiLSTM_BN_3layers_best_model_{SAMPLE_METHOD}sample_{i}", BiLSTM_BN_3layers)
+        model_name = f"BiLSTM_BN_best_model_{SAMPLE_METHOD}sample_{i}"
+        print(model_name)
+        train_model_best(model_name, BiLSTM_BN, val=False)
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
         print("Start Time =", current_time)

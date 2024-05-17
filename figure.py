@@ -18,15 +18,19 @@ def plot_figure(info, model_name):
     alarm_sen_list = info["alarm_sen_list"]
     alarm_acc_list = info["alarm_acc_list"]
     train_loss_total_list = info["train_loss_total_list"]
+    roc_auc_list = info["roc_auc_list"]
     
     accuracy_tensor = torch.tensor(accuracy_list)  # Convert list to PyTorch tensor
     specificity_tensor = torch.tensor(specificity_list)  # Convert list to PyTorch tensor
     alarm_sen_tensor = torch.tensor(alarm_sen_list)  # Convert list to PyTorch tensor
     alarm_acc_tensor = torch.tensor(alarm_acc_list)  # Convert list to PyTorch tensor
+    roc_auc_tensor = torch.tensor(roc_auc_list)  # Convert list to PyTorch tensor
+
     accuracy_list_cpu = accuracy_tensor.cpu()  # Move tensor to CPU memory
     specificity_list_cpu = specificity_tensor.cpu()  # Move tensor to CPU memory
     alarm_sen_cpu = alarm_sen_tensor.cpu()
     alarm_acc_cpu = alarm_acc_tensor.cpu()
+    roc_auc_cpu = roc_auc_tensor.cpu()
 
     plt.plot(train_loss_list, label='Train Loss')
     plt.plot(val_loss_list, label='Validation Loss')
@@ -67,4 +71,20 @@ def plot_figure(info, model_name):
     # 显示网格
     plt.grid(True)
     plt.savefig(f"{model_name}/{model_name}_train_loss.png")
+    plt.show()
+
+    # 创建x轴数据，假设为等间距的点
+    x = np.arange(len(roc_auc_cpu))
+
+    # 绘制曲线
+    plt.plot(x, roc_auc_cpu)
+
+    # 添加标题和标签
+    plt.title('Label Curve')
+    plt.xlabel('Index')
+    plt.ylabel('AUROC')
+
+    # 显示网格
+    plt.grid(True)
+    plt.savefig(f"{model_name}/{model_name}_auroc.png")
     plt.show()

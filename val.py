@@ -121,4 +121,4 @@ def validation(data_loader, model, model_name, idx):
     # 绘制混淆矩阵
     plot_confusion_matrix(model_name, idx, confusion_matrix, classes=['Survive', 'Death'])
 
-    return confusion_matrix, specificity, sensitivity, alarm_accuracy, accuracy
+    return confusion_matrix, specificity, sensitivity, alarm_accuracy, accuracy, roc_auc
