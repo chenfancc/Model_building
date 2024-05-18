@@ -100,6 +100,90 @@ class BiLSTM_BN(nn.Module):
 
         return output.squeeze(1).to(x.device)
 
+class BiLSTM_BN_Resnet(nn.Module):
+    def __init__(self):
+        super(BiLSTM_BN_Resnet, self).__init__()
+        self.lstm = nn.LSTM(input_size=7, hidden_size=128, num_layers=2, batch_first=True, bidirectional=True)
+        self.dropout = nn.Dropout(0.5)
+
+        self.fc1_1 = nn.Linear(256, 256)
+        self.relu1_1 = nn.ReLU()  # ReLU激活函数
+        self.bn1_1 = nn.BatchNorm1d(256)  # 批标准化层
+        self.dropout1_1 = nn.Dropout(0.5)
+
+        self.fc1_2 = nn.Linear(256, 256)
+        self.relu1_2 = nn.ReLU()  # ReLU激活函数
+        self.bn1_2 = nn.BatchNorm1d(256)  # 批标准化层
+        self.dropout1_2 = nn.Dropout(0.5)
+
+        self.fc1_3 = nn.Linear(256, 256)
+        self.relu1_3 = nn.ReLU()  # ReLU激活函数
+        self.bn1_3 = nn.BatchNorm1d(256)  # 批标准化层
+        self.dropout1_3 = nn.Dropout(0.5)
+
+        self.fc2 = nn.Linear(256, 64)
+        self.relu2 = nn.ReLU()  # ReLU激活函数
+        self.bn2 = nn.BatchNorm1d(64)  # 批标准化层
+        self.dropout2 = nn.Dropout(0.5)
+
+        self.fc3 = nn.Linear(64, 32)
+        self.relu3 = nn.ReLU()  # ReLU激活函数
+        self.bn3 = nn.BatchNorm1d(32)  # 批标准化层
+        self.dropout3 = nn.Dropout(0.5)
+
+        self.fc4 = nn.Linear(32, 8)
+        self.relu4 = nn.ReLU()  # ReLU激活函数
+        self.bn4 = nn.BatchNorm1d(8)  # 批标准化层
+        self.dropout4 = nn.Dropout(0.5)
+
+        self.fc5 = nn.Linear(8, 1)
+
+    def forward(self, x):
+        # print(x.shape)
+        h0 = torch.zeros(4, x.size(0), 128).to(x.device)
+        c0 = torch.zeros(4, x.size(0), 128).to(x.device)
+        output, _ = self.lstm(x, (h0, c0))
+        output = output[:, -1, :]  # 取最后一个时间步的隐藏状态
+        output = self.dropout(output)
+
+        output_1 = self.fc1_1(output)
+        output_1 = self.bn1_1(output_1)
+        output_1 = self.relu1_1(output_1)
+        output_1 = self.dropout1_1(output_1)
+        output_1 += output
+
+        output_2 = self.fc1_2(output_1)
+        output_2 = self.bn1_2(output_2)
+        output_2 = self.relu1_2(output_2)
+        output_2 = self.dropout1_2(output_2)
+        output_2 += output_1
+
+        output_3 = self.fc1_3(output_2)
+        output_3 = self.bn1_3(output_3)
+        output_3 = self.relu1_3(output_3)
+        output_3 = self.dropout1_3(output_3)
+        output_3 += output_2
+
+        output = self.fc2(output_3)
+        output = self.bn2(output)
+        output = self.relu2(output)
+        output = self.dropout2(output)
+
+        output = self.fc3(output)
+        output = self.bn3(output)
+        output = self.relu3(output)
+        output = self.dropout3(output)
+
+        output = self.fc4(output)
+        output = self.bn4(output)
+        output = self.relu4(output)
+        output = self.dropout4(output)
+
+        output = self.fc5(output)
+        output = torch.sigmoid(output)
+
+        return output.squeeze(1).to(x.device)
+
 
 class BiLSTM_BN_3layers(nn.Module):
     def __init__(self):

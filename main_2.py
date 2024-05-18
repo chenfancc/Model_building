@@ -103,8 +103,9 @@ if __name__ == '__main__':
         print(BATCH_SIZE)
         print(GAMMA)
         print(STEP_SIZE)
-        model_name = f"BiLSTM_BN_best_model_{SAMPLE_METHOD}sample_{i}"
+        model = BiLSTM_BN_Resnet
+        model_name = f"{model.__name__}_best_model_{SAMPLE_METHOD}sample_{i}"
         print(model_name)
-        train_model_best(model_name, BiLSTM_BN)
+        train_model_best(model_name, model)
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 获取当前时间
         print("Start Time =", current_time)
